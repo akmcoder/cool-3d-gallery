@@ -10,7 +10,10 @@
 
 		<div id="container"></div>
 
-		<div id="info">Cool Gallery by Herrgott</div>
+		<div id="info">
+			Cool Gallery by Herrgott <br>
+			Press <b>ALT+N</b> to change gallery display mode
+		</div>
 
 		<script src="./assets/js/3rdparty/jquery.js"></script>
 		<script src="./assets/js/3rdparty/three.min.js"></script>
@@ -21,8 +24,12 @@
 		<script src="./assets/js/data.js"></script>
  		<script src="./assets/js/jquery.cool-3d-gallery.js"></script>
 
+		<input type="file" accept="image/">
+
 		<script>
-			$("#container").C3DGallery( { data: table} );
+			$(document).ready( function() {
+				$("#container").C3DGallery({data: table});
+			});
 		</script>
 	</body>
 </html>
