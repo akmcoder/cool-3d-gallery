@@ -278,7 +278,7 @@ $.fn.C3DGallery = function( options ){
 		var url = elem.childNodes[0].childNodes[0].src;
 		console.log( url );
 
-		
+
 
 		var object = objects[ i ];
 		var target = targets[ i ];
