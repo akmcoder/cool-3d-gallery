@@ -23,7 +23,7 @@ function init() {
 		var element = document.createElement( 'div' );
 		element.className = 'element';
 		element.style.zIndex = 0;
-		element.style.backgroundColor = 'rgb(33,33,33)';
+		element.style.backgroundColor = 'rgba(0,0,0,0)';
 
 		var image = document.createElement( 'div' );
 		image.className = 'image';
@@ -143,7 +143,7 @@ function init() {
 		object.position.x = x;
 		object.position.y = y;
 
-		targets.custom.push( object );
+		targets.spiral.push( object );
 
 		if (k < b) {
 			k++;
@@ -206,10 +206,10 @@ function init() {
 
 	}, false );
 
-	var button = document.getElementById( 'custom' );
+	var button = document.getElementById( 'spiral' );
 	button.addEventListener( 'click', function ( event ) {
 
-		transform( targets.custom, 2000 );
+		transform( targets.spiral, 2000 );
 
 	}, false );				
 
