@@ -5,26 +5,37 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<title>Cool Gallery</title>
 		<link rel="stylesheet" href="./assets/css/cool-3d-gallery.css">
+
+		<style>
+			html, body {
+				height: 100%;
+			}
+
+			body {
+				background-color: #131313;
+				margin: 0;
+				font-family: Helvetica, sans-serif;;
+				overflow: hidden;
+			}
+
+			a {
+				color: #ffffff;
+			}
+		</style>
+
 	</head>
 	<body>
 
-		<div id="container"></div>
+		<div id="container" style="position: absolute; width: 100%; height: 100%"></div>
 
-		<div id="info">
+		<div style="position: absolute;width: 100%;color: #ffffff;padding: 5px;font-family: Monospace, serif;font-size: 13px;font-weight: bold;text-align: center;z-index: 1;">
 			Cool Gallery by Herrgott <br>
 			Press <b>ALT+N</b> to change gallery display mode
 		</div>
 
-		<script src="./assets/js/3rdparty/jquery.js"></script>
-		<script src="./assets/js/3rdparty/three.min.js"></script>
-		<script src="./assets/js/3rdparty/tween.min.js"></script>
-		<script src="./assets/js/3rdparty/TrackballControls.js"></script>
-		<script src="./assets/js/3rdparty/CSS3DRenderer.js"></script>
-
+		<script src="./assets/js/scripts.js"></script>
 		<script src="./assets/js/data.js"></script>
  		<script src="./assets/js/jquery.cool-3d-gallery.js"></script>
-
-		<input type="file" accept="image/">
 
 		<script>
 			$(document).ready( function() {
