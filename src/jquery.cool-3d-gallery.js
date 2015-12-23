@@ -38,11 +38,26 @@ $.fn.C3DGallery = function( options ){
 
 	var 	camera, scene, renderer, controls,
 			objects = [],
-			targets = { table: [], sphere: [], helix: [], grid: [], spiral: [] };
+			targets = { table: [], sphere: [], helix: [], grid: [], spiral: [], random: [] };
 
 	// for global access
 	window.objects3d = objects;
 	window.targets3d = targets;
+
+	function wrapImage( elem ) {
+		var element = document.createElement('div');
+		element.className = 'element';
+		element.style.zIndex = 0;
+		element.style.backgroundColor = 'rgba(0,0,0,0)';
+
+		var wrapper = document.createElement('div');
+		wrapper.className = 'image';
+
+		wrapper.appendChild(elem);
+		element.appendChild(wrapper);
+
+		return element;
+	}
 
 	function init() {
 
@@ -52,17 +67,23 @@ $.fn.C3DGallery = function( options ){
 		scene = new THREE.Scene();
 
 		// create images from parameters
+		var loaded = 0;
+
 		for ( var i = 0; i < data.length; i++ ) {
 
-			var element = document.createElement('div');
-			element.className = 'element';
-			element.style.zIndex = 0;
-			element.style.backgroundColor = 'rgba(0,0,0,0)';
+			var image = document.createElement('img');
+			image.onload = function(){
+				loaded++;
 
-			var image = document.createElement('div');
-			image.className = 'image';
-			image.innerHTML = "<img src='" + data[i].image + "' alt='" + data[i].description + "' />";
-			element.appendChild(image);
+				if (loaded == data.length) {
+					transform(  targets[effect], duration );
+				}
+			}
+
+			image.src = data[i].image;
+
+			var element = wrapImage( image );
+			element.id = "image_" + i;
 
 			element.addEventListener('click', function () {
 				showImage(this);
@@ -72,8 +93,8 @@ $.fn.C3DGallery = function( options ){
 			object.position.x = Math.random() * 4000 - 2000;
 			object.position.y = Math.random() * 4000 - 2000;
 			object.position.z = Math.random() * 4000 - 2000;
-			scene.add(object);
 
+			scene.add(object);
 			objects.push(object);
 		}
 
@@ -202,11 +223,25 @@ $.fn.C3DGallery = function( options ){
 
 		}
 
+		// create images from parameters
+		var loaded = 0;
+
+		for ( var i = 0; i < objects.length; i++ ) {
+
+			var target = new THREE.CSS3DObject(element);
+			target.position.x = Math.random() * 4000 - 2000;
+			target.position.y = Math.random() * 4000 - 2000;
+			target.position.z = Math.random() * 4000 - 2000;
+
+			targets.random.push( target );
+		}
+
 		//
 
 		renderer = new THREE.CSS3DRenderer();
-		renderer.setSize( window.innerWidth, window.innerHeight );
-		renderer.domElement.style.position = 'absolute';
+
+		renderer.setSize( container.width(), container.height());
+		renderer.domElement.style.position = 'relative';
 		container.append( renderer.domElement );
 
 		//
@@ -217,28 +252,26 @@ $.fn.C3DGallery = function( options ){
 		controls.maxDistance = 16000;
 		controls.addEventListener( 'change', render );
 
+		function nextEffect(){
+			var arr = [], index = 0;
+			for (var eff in targets3d) {
+				arr.push(eff);
+				if (eff === effect) index = arr.length;
+
+			}
+			effect = arr[index % arr.length];
+			return targets3d[effect];
+		}
+
 		window.addEventListener( 'keydown', function ( evt ) {
 
 			if ( evt.key != 'n' || !evt.altKey ) return;
-
-			function nextEffect(){
-				var arr = [], index = 0;
-				for (var eff in targets3d) {
-					arr.push(eff);
-					if (eff === effect) index = arr.length;
-
-				}
-				effect = arr[index % arr.length];
-				return targets3d[effect];
-			}
 
 			transform(  nextEffect(), duration );
 
 		}, false );
 
 		//
-
-		transform(  targets[effect], duration );
 
 		render();
 
@@ -275,32 +308,46 @@ $.fn.C3DGallery = function( options ){
 	}
 
 	function showImage( elem ){
-		var url = elem.childNodes[0].childNodes[0].src;
-		console.log( url );
 
+		TWEEN.removeAll();
 
+		var object = undefined;
+		var target = camera;
 
-		var object = objects[ i ];
-		var target = targets[ i ];
+		for (var i = 0; i < objects.length; i++) {
+			if ( elem.id == objects[i].element.id) {
+				object = objects[i];
 
-		new TWEEN.Tween( object.position )
-				.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+				break;
+			}
+		}
+
+		/* new TWEEN.Tween( object.position )
+				.to( { x: target.position.x, y: target.position.y, z: target.position.z }, 1500 )
 				.easing( TWEEN.Easing.Exponential.InOut )
-				.start();
+				.start(); */
 
 		new TWEEN.Tween( object.rotation )
-				.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
-				.easing( TWEEN.Easing.Exponential.InOut )
+				.to( { x: target.rotation.x + 6.28, y: target.rotation.y + 6.28, z: target.rotation.z + 6.28 }, 1500 )
+				.easing( TWEEN.Easing.Circular.Out )
+				.start();
+
+		new TWEEN.Tween( this )
+				.to( {}, 500 )
+				.onUpdate( function(){
+					$(object.element).css("z-index", 20000);
+					render();
+				} )
 				.start();
 
 	}
 
 	function onWindowResize() {
 
-		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.aspect = container.width() / container.height();
 		camera.updateProjectionMatrix();
 
-		renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer.setSize( container.width(), container.height() );
 
 		render();
 
@@ -309,7 +356,7 @@ $.fn.C3DGallery = function( options ){
 	function updateZIndexes(){
 
 		for (var i = 0; i < objects.length; i++){
-			var distance = camera.position.distanceTo( targets[effect][i].position );
+			var distance = camera.position.distanceTo( objects[i].position );
 			$(objects[i].element).css("z-index", Math.floor( 20000 - distance ));
 		}
 
@@ -324,6 +371,8 @@ $.fn.C3DGallery = function( options ){
 		updateZIndexes();
 
 		controls.update();
+
+		render();
 
 	}
 
