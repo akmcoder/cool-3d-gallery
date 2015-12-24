@@ -311,8 +311,17 @@ $.fn.C3DGallery = function( options ){
 
 		TWEEN.removeAll();
 
-		var object = undefined;
+		var object;
 		var target = camera;
+
+		var matrix = new THREE.Matrix4();
+
+		matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
+
+		var target_pos = (new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z-60)).sub(camera.position).applyProjection(matrix);
+
+		console.log( target_pos );
+		console.log( camera.position );
 
 		for (var i = 0; i < objects.length; i++) {
 			if ( elem.id == objects[i].element.id) {
@@ -322,23 +331,25 @@ $.fn.C3DGallery = function( options ){
 			}
 		}
 
-		/* new TWEEN.Tween( object.position )
-				.to( { x: target.position.x, y: target.position.y, z: target.position.z }, 1500 )
+		new TWEEN.Tween( object.position )
+				.to( { x:target_pos.x, y: target_pos.y, z: target_pos.z }, 500 )
 				.easing( TWEEN.Easing.Exponential.InOut )
-				.start(); */
+				.start();
 
 		new TWEEN.Tween( object.rotation )
-				.to( { x: target.rotation.x + 6.28, y: target.rotation.y + 6.28, z: target.rotation.z + 6.28 }, 1500 )
+				.to( { x: target.rotation.x + 6.28, y: target.rotation.y + 6.28, z: target.rotation.z + 6.28 }, 300 )
 				.easing( TWEEN.Easing.Circular.Out )
 				.start();
 
 		new TWEEN.Tween( this )
-				.to( {}, 500 )
+				.to( {}, 300 )
 				.onUpdate( function(){
 					$(object.element).css("z-index", 20000);
 					render();
 				} )
 				.start();
+
+		controls.
 
 	}
 
